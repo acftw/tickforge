@@ -73,3 +73,15 @@ def test_bootstrap_and_paired():
     assert lo < 5 < hi
     d = paired_difference([{"pnl": 2.0}] * 10, [{"pnl": 1.0}] * 10)
     assert d["mean"] == 1.0 and d["share_positive"] == 1.0
+
+
+def test_depth_grid_matches_quotes():
+    m = market(300)
+    m.depth_window = 25
+    r = tf.simulate(m, glft(), 4)
+    grid = r["depth"].reshape(len(r["t"]), 51)
+    prices = m.start_price + np.arange(-25, 26)
+    for i in range(0, len(r["t"]), 50):
+        bid = r["maker_bid"][i]
+        if not np.isnan(bid) and abs(bid - m.start_price) <= 25:
+            assert grid[i, int(bid - prices[0])] >= 2  # the maker's own lots rest there

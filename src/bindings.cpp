@@ -28,6 +28,7 @@ py::dict result_to_dict(SimResult&& r) {
   d["pnl"] = to_array(std::move(r.pnl));
   d["maker_bid"] = to_array(std::move(r.maker_bid));
   d["maker_ask"] = to_array(std::move(r.maker_ask));
+  d["depth"] = to_array(std::move(r.depth));
   d["fill_t"] = to_array(std::move(r.fill_t));
   d["fill_price"] = to_array(std::move(r.fill_price));
   d["fill_mid"] = to_array(std::move(r.fill_mid));
@@ -112,7 +113,7 @@ PYBIND11_MODULE(_core, m) {
       FIELD(MarketConfig, lp_offset_p) FIELD(MarketConfig, lp_max_size) FIELD(MarketConfig, noise_rate)
       FIELD(MarketConfig, noise_max_size) FIELD(MarketConfig, informed_rate)
       FIELD(MarketConfig, informed_max_size) FIELD(MarketConfig, jump_rate)
-      FIELD(MarketConfig, sample_interval);
+      FIELD(MarketConfig, sample_interval) FIELD(MarketConfig, depth_window);
 
   py::class_<MakerConfig>(m, "MakerConfig")
       .def(py::init<>())

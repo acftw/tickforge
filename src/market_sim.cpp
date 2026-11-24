@@ -218,6 +218,11 @@ class Simulator {
     const double nan = std::numeric_limits<double>::quiet_NaN();
     res_.maker_bid.push_back(bid_id_ != kNoOrder && book_.is_live(bid_id_) ? book_.order_price(bid_id_) : nan);
     res_.maker_ask.push_back(ask_id_ != kNoOrder && book_.is_live(ask_id_) ? book_.order_price(ask_id_) : nan);
+    if (m_.depth_window > 0) {
+      for (Price p = m_.start_price - m_.depth_window; p <= m_.start_price + m_.depth_window; ++p) {
+        res_.depth.push_back(static_cast<std::int32_t>(book_.depth(Side::Buy, p) - book_.depth(Side::Sell, p)));
+      }
+    }
   }
 
   void decide(double t) {

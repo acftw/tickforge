@@ -47,6 +47,7 @@ struct MarketConfig {
   int informed_max_size = 50;    // informed traders sweep every mispriced order up to this size
   double jump_rate = 0.1;        // fundamental jumps (+/-1 tick) per second
   double sample_interval = 0.1;  // recording grid, seconds
+  int depth_window = 0;          // if > 0, record resting depth at start_price +/- this many ticks
 };
 
 struct MakerConfig {
@@ -88,6 +89,10 @@ struct SimResult {
   std::vector<double> t, mid, fundamental, spread, inventory, pnl;
   // Maker's live quote prices on the grid (NaN when it has no order on that side).
   std::vector<double> maker_bid, maker_ask;
+  // Resting depth on the grid (only if depth_window > 0): for each sample, 2*depth_window+1
+  // values for prices start_price-depth_window ... start_price+depth_window.
+  // Positive = bid quantity, negative = ask quantity (a price can't hold both).
+  std::vector<std::int32_t> depth;
   // Market-maker fills. side = +1 when the maker bought.
   std::vector<double> fill_t, fill_price, fill_mid, fill_fundamental;
   std::vector<int> fill_side, fill_taker;

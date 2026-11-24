@@ -109,3 +109,26 @@ TEST_CASE("no market maker means no maker fills") {
   CHECK(r.trade_t.size() > 100);
   CHECK(r.final_inventory == 0);
 }
+
+TEST_CASE("depth recording: bids below asks at every sample") {
+  MarketConfig m;
+  m.duration = 120;
+  m.sample_interval = 1.0;
+  m.depth_window = 30;
+  const SimResult r = simulate(m, MakerConfig{}, 9);
+  const std::size_t w = 2 * 30 + 1;
+  REQUIRE(r.depth.size() == r.t.size() * w);
+  for (std::size_t i = 0; i < r.t.size(); ++i) {
+    // Inside the window every bid level must sit below every ask level.
+    int highest_bid = -1, lowest_ask = static_cast<int>(w);
+    for (std::size_t j = 0; j < w; ++j) {
+      const int d = r.depth[i * w + j];
+      if (d > 0) highest_bid = static_cast<int>(j);
+      if (d < 0 && lowest_ask == static_cast<int>(w)) lowest_ask = static_cast<int>(j);
+    }
+    CHECK(highest_bid < lowest_ask);
+  }
+  MarketConfig off = m;
+  off.depth_window = 0;
+  CHECK(simulate(off, MakerConfig{}, 9).depth.empty());
+}

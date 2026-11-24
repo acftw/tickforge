@@ -77,6 +77,13 @@ def cmd_figures(args) -> None:
         print("wrote", p)
 
 
+def cmd_site(args) -> None:
+    from tickforge.site import build
+
+    for p in build(Path(args.out), Path(args.site)):
+        print("wrote", p, f"({p.stat().st_size / 1024:.0f} KB)")
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(
         prog="tickforge", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -107,6 +114,10 @@ def main(argv=None) -> int:
     a.add_argument("--workers", type=int, default=0)
     a.add_argument("--img", default=None, help="chart folder (default: docs/img, or results/img_quick with --quick)")
 
+    w = sub.add_parser("site", help="write the website's data files from saved results")
+    w.add_argument("--out", default="results", help="directory holding study.json etc. (default: results)")
+    w.add_argument("--site", default="docs", help="website folder (default: docs)")
+
     args = p.parse_args(argv)
     if args.cmd == "replicate-as":
         cmd_replicate(args)
@@ -114,6 +125,8 @@ def main(argv=None) -> int:
         cmd_study(args)
     elif args.cmd == "figures":
         cmd_figures(args)
+    elif args.cmd == "site":
+        cmd_site(args)
     else:
         cmd_replicate(args)
         cmd_study(args)

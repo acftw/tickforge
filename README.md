@@ -8,6 +8,8 @@
 **A limit order book matching engine in C++, an agent-based market built on it, and an
 honest test of market-making strategies.**
 
+**Website, with an interactive 3D model of the order book:** [acftw.github.io/tickforge](https://acftw.github.io/tickforge/)
+
 * **Matching engine:** price-time priority, about **20 million messages a second**
   (50 ns each), **6.5x faster** than a textbook `std::map` book. It's checked against
   two independent reference books on 800,000 random orders.
@@ -209,6 +211,7 @@ tickforge replicate-as        # Avellaneda & Stoikov tables, ~1 s
 tickforge study               # full study, ~2 min on 2 cores -> results/study.json
 tickforge figures             # redraw docs/img/*.png
 tickforge all --quick         # everything, small and fast
+tickforge site                # rebuild the website's data (docs/data)
 pytest                        # Python tests
 
 # C++ tests (with sanitizers) and benchmark
@@ -246,7 +249,7 @@ tests/cpp/           doctest: unit, differential and simulator tests
 tests/python/        pytest: cross-check vs pure-Python book, replication, calibration, metrics
 python/tickforge/    as_model, calibration, analysis, study, report, cli
 results/             JSON behind every number in this README
-docs/img/            charts
+docs/                website (index.html + data/) and README charts (img/)
 GUIDE.md             plain-language walkthrough of every part, with interview questions
 VERIFY.md            how to install and check everything on your own Mac
 ```

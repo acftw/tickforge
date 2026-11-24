@@ -17,7 +17,9 @@ def test_site_data(tmp_path):
     from tickforge.site import build
 
     results = Path(__file__).resolve().parents[2] / "results"
-    landscape, summary = build(results, tmp_path)
+    landscape, summary, index = build(results, tmp_path)
+    html = index.read_text()
+    assert html.startswith("<!doctype html>") and html.index("<title>") < html.index("<body>")
     L = json.loads(landscape.read_text())
     assert set(L["runs"]) == {"symmetric", "glft+lead"}
     m = L["meta"]

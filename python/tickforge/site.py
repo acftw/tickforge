@@ -1,6 +1,8 @@
 """Data for the project website (docs/index.html).
 
-Writes two JSON files next to the page:
+The page source is site/page.html (also published as a hosted artifact, which adds
+the document wrapper itself). This module writes a complete docs/index.html for
+GitHub Pages from it, plus two JSON files next to the page:
 
 * data/landscape.json: one five-minute example session replayed twice on the
   same random seed, once with the symmetric maker and once with GLFT + lead
@@ -128,8 +130,20 @@ def summary(study: dict, replication: dict, benchmark: dict) -> dict:
     }
 
 
-def build(results: Path, out: Path, seed: int = 17) -> list[Path]:
+HEAD = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+"""
+
+
+def build(results: Path, out: Path, seed: int = 17, page: Path | None = None) -> list[Path]:
+    """Write the site's data files and, if the page source exists, a complete docs/index.html."""
     results, out = Path(results), Path(out)
+    page = Path(page) if page else results.parent / "site" / "page.html"
     study = json.loads((results / "study.json").read_text())
     rep = json.loads((results / "as_replication.json").read_text())
     bench = json.loads((results / "benchmark.json").read_text())
@@ -137,4 +151,9 @@ def build(results: Path, out: Path, seed: int = 17) -> list[Path]:
     paths = [out / "data" / "landscape.json", out / "data" / "summary.json"]
     paths[0].write_text(json.dumps(landscape(study, seed=seed), separators=(",", ":")))
     paths[1].write_text(json.dumps(summary(study, rep, bench), separators=(",", ":")))
+    if page.exists():
+        paths.append(out / "index.html")
+        src = page.read_text()
+        cut = src.index("</style>") + len("</style>")  # title, meta, fonts and styles go in <head>
+        paths[-1].write_text(HEAD + src[:cut] + "\n</head>\n<body>\n" + src[cut:] + "\n</body>\n</html>\n")
     return paths

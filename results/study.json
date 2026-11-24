@@ -396,6 +396,7 @@
     "workers": 2
   },
   "market": {
+    "depth_window": 0,
     "duration": 3600.0,
     "informed_max_size": 50,
     "informed_rate": 5.0,

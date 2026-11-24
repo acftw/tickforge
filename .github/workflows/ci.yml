@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  cpp:
+    name: C++ ${{ matrix.os }} ${{ matrix.compiler }} (ASan + UBSan)
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, compiler: g++ }
+          - { os: ubuntu-latest, compiler: clang++ }
+          - { os: macos-latest, compiler: clang++ }   # Apple Clang + libc++ on Apple Silicon
+    env:
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: >
+          cmake -S . -B build -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=Debug
+          -DTICKFORGE_BUILD_TESTS=ON -DTICKFORGE_SANITIZE=ON -DCMAKE_CXX_FLAGS=-Werror
+      - name: Build
+        run: cmake --build build -j 3
+      - name: Test
+        run: ./build/tickforge_tests
+      - name: Benchmark (smoke)
+        run: |
+          cmake -S . -B build-rel -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=Release -DTICKFORGE_BUILD_BENCH=ON
+          cmake --build build-rel -j 3
+          ./build-rel/bench_order_book 1000000
+
+  python:
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.10", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: pip install ".[dev]"
+      - name: Lint
+        run: ruff check python tests/python
+      - name: Test
+        run: pytest -v
+      - name: Quick study
+        run: tickforge all --quick --out ci-results --img ci-results/img
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
+        with:
+          name: quick-study
+          path: ci-results

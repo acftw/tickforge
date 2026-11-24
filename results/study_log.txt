@@ -1,0 +1,57 @@
+Avellaneda & Stoikov (2008) replication, 1000 simulations per row
+
+ gamma strategy     profit   paper      z     std   paper   std q   paper
+   0.1 inventory     65.26    65.0   1.24    6.51     6.6    3.00     2.9
+   0.1 symmetric     68.68    68.4   0.68   12.93    12.7    8.70     8.4
+  0.01 inventory     68.71    68.6   0.41    8.65     8.7    5.36     5.1
+  0.01 symmetric     69.03    68.8   0.53   13.48    12.8    9.03     8.7
+   1.0 inventory     31.44    31.4   0.25    4.92     5.0    1.63     1.7
+   1.0 symmetric     43.57    44.0  -1.26   10.86    11.0    5.28     5.1
+calibrating sigma, A, kappa from market-maker-free sessions ...
+  sigma=0.234 ticks/sqrt(s)  A=23.88/s  kappa=5.14/tick
+tuning GLFT risk aversion on training sessions ...
+  gamma=2.0   pnl/h= -1044.0  sharpe/h= -5.52  inv sd=14.18
+  gamma=5.0   pnl/h= -1059.1  sharpe/h= -5.99  inv sd=14.20
+  gamma=10.0  pnl/h=  -757.6  sharpe/h= -5.13  inv sd=11.68
+  gamma=20.0  pnl/h=  -109.4  sharpe/h= -1.50  inv sd=6.49
+  gamma=30.0  pnl/h=   180.7  sharpe/h=  2.91  inv sd=4.22
+  gamma=50.0  pnl/h=   482.7  sharpe/h= 16.14  inv sd=2.35
+  gamma=80.0  pnl/h=   528.6  sharpe/h= 15.85  inv sd=1.85
+  gamma=120.0 pnl/h=   524.3  sharpe/h= 23.91  inv sd=1.38
+  gamma=200.0 pnl/h=   360.6  sharpe/h= 26.23  inv sd=1.02
+  gamma=300.0 pnl/h=    53.5  sharpe/h=  4.73  inv sd=0.28
+  gamma=500.0 pnl/h=     7.0  sharpe/h=  1.15  inv sd=0.16
+tuning queue-imbalance weight on training sessions ...
+  coef=0.0   pnl/h=   528.6  sharpe/h= 15.85
+  coef=0.25  pnl/h=   550.7  sharpe/h= 24.94
+  coef=0.5   pnl/h=   551.4  sharpe/h= 25.26
+  coef=1.0   pnl/h=   510.2  sharpe/h= 26.50
+  coef=1.5   pnl/h=   396.2  sharpe/h= 14.45
+testing on 200 unseen sessions (gamma=80.0, imbalance=0.5) ...
+  symmetric       pnl/h= -1060.1 [-1088, -1033]  sharpe/h= -5.30  informed share=47.3%
+  glft            pnl/h=   528.1 [522, 533]  sharpe/h= 12.69  informed share=25.3%
+  glft+imbalance  pnl/h=   553.3 [550, 557]  sharpe/h= 21.60  informed share=24.0%
+  glft+lead       pnl/h=   819.2 [814, 825]  sharpe/h= 20.44  informed share=13.9%
+  queue haircut: model predicts 2323097 fills, maker got 309542 (13%)
+latency sweep on 100 more unseen sessions ...
+      0 ms  symmetric=   532.6  glft=   602.9  glft+imbalance=   574.1  glft+lead=   815.6
+      1 ms  symmetric=   508.5  glft=   598.5  glft+imbalance=   574.6  glft+lead=   816.8
+      2 ms  symmetric=   445.3  glft=   588.4  glft+imbalance=   570.5  glft+lead=   806.6
+      5 ms  symmetric=   162.0  glft=   575.6  glft+imbalance=   570.5  glft+lead=   824.4
+     10 ms  symmetric= -1106.4  glft=   539.2  glft+imbalance=   565.9  glft+lead=   816.7
+     20 ms  symmetric= -1024.7  glft=   525.8  glft+imbalance=   551.3  glft+lead=   813.5
+     50 ms  symmetric= -1009.5  glft=   492.6  glft+imbalance=   512.7  glft+lead=   795.1
+    100 ms  symmetric=  -996.0  glft=   417.2  glft+imbalance=   449.3  glft+lead=   770.0
+    200 ms  symmetric= -1076.9  glft=   266.6  glft+imbalance=   318.7  glft+lead=   698.7
+    500 ms  symmetric= -1141.1  glft=  -113.0  glft+imbalance=   -47.2  glft+lead=   439.3
+   1000 ms  symmetric= -1250.4  glft=  -659.8  glft+imbalance=  -564.7  glft+lead=   -74.0
+  latency at which P&L reaches zero: symmetric: 6 ms, glft: 411 ms, glft+imbalance: 461 ms, glft+lead: 928 ms
+
+finished in 122.5 s
+wrote docs/img/as_replication.png
+wrote docs/img/strategies.png
+wrote docs/img/markouts.png
+wrote docs/img/latency.png
+wrote docs/img/gamma_frontier.png
+wrote docs/img/benchmark.png
+done

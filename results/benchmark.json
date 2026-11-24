@@ -1,0 +1,1 @@
+{"messages": 5000000, "fast": {"msgs_per_sec_millions": 20.01, "ns_per_msg": 50.0, "p50_ns": 99, "p99_ns": 582, "p999_ns": 881}, "reference": {"msgs_per_sec_millions": 3.06, "ns_per_msg": 326.7, "p50_ns": 195, "p99_ns": 3432, "p999_ns": 7825}, "speedup": 6.54}
